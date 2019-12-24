@@ -12,3 +12,7 @@ echo "Running neovim installation script"
 ./nvim/install.sh
 echo "Done!"
 
+echo "Installing autostart entries"
+ln -s $HOME/dotfiles/autostart/* $HOME/.config/autostart/
+echo "Done!"
+

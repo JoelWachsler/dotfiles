@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 exec startkde
-xmodmap ~/.Xmodmap
+xmodmap $HOME/.Xmodmap
 
