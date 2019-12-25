@@ -685,7 +685,7 @@ xkb_types "complete" {
         level_name[Level4]= "Alt Number";
     };
     type "CUST_ALT" {
-        modifiers= Shift+Alt;
+        modifiers = Control+Shift+Alt;
         map[Shift] = Level2;
         map[Shift+Alt] = Level3;
         map[Alt] = Level3;
