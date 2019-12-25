@@ -684,15 +684,6 @@ xkb_types "complete" {
         level_name[Level3]= "Alt Base";
         level_name[Level4]= "Alt Number";
     };
-    type "CUST_ALT" {
-        modifiers= Shift+Alt;
-        map[Shift] = Level2;
-        map[Shift+Alt] = Level3;
-        map[Alt] = Level3;
-        level_name[Level1] = "Base";
-        level_name[Level2] = "Shift";
-        level_name[Level3] = "Lock";
-    };
 };
 
 xkb_compatibility "complete" {
@@ -1185,37 +1176,13 @@ xkb_compatibility "complete" {
         indicatorDrivesKeyboard;
         controls= mouseKeys;
     };
-    interpret osfLeft {
-      repeat = True;
-      action = RedirectKey(keycode=<LEFT>, clearmodifiers=Alt);
-    };
-    interpret osfRight {
-      repeat = True;
-      action = RedirectKey(keycode=<RGHT>, clearmodifiers=Alt);
-    };
-    interpret osfUp {
-      repeat = True;
-      action = RedirectKey(keycode=<UP>, clearmodifiers=Alt);
-    };
-    interpret osfDown {
-      repeat = True;
-      action = RedirectKey(keycode=<DOWN>, clearmodifiers=Alt);
-    };
-    interpret osfBeginLine {
-      repeat = True;
-      action = RedirectKey(keycode=<AC03>, clearmodifiers=Alt, modifiers=Control);
-    };
-    interpret osfEndLine {
-      repeat = True;
-      action = RedirectKey(keycode=<AD07>, clearmodifiers=Alt, modifiers=Control);
-    };
 };
 
 xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
 
     name[group1]="Swedish (no dead keys)";
 
-    key  <ESC> {         [       Caps_Lock ] };
+    key  <ESC> {         [          Escape ] };
     key <AE01> {
         type= "FOUR_LEVEL",
         symbols[Group1]= [               1,          exclam,      exclamdown,     onesuperior ]
@@ -1302,13 +1269,9 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
         type= "FOUR_LEVEL_ALPHABETIC",
         symbols[Group1]= [               o,               O,              oe,              OE ]
     };
-    // key <AD10> {
-    //     type= "FOUR_LEVEL_ALPHABETIC",
-    //     symbols[Group1]= [               p,               P,           thorn,           THORN ]
-    // };
     key <AD10> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               p,               P,           osfUp                  ]
+        type= "FOUR_LEVEL_ALPHABETIC",
+        symbols[Group1]= [               p,               P,           thorn,           THORN ]
     };
     key <AD11> {
         type= "FOUR_LEVEL_SEMIALPHABETIC",
@@ -1340,37 +1303,21 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
         type= "FOUR_LEVEL_ALPHABETIC",
         symbols[Group1]= [               g,               G,             eng,             ENG ]
     };
-    // key <AC06> {
-    //     type= "FOUR_LEVEL_ALPHABETIC",
-    //     symbols[Group1]= [               h,               H,         hstroke,         Hstroke ]
-    // };
     key <AC06> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               h,         H,              osfLeft                   ]
+        type= "FOUR_LEVEL_ALPHABETIC",
+        symbols[Group1]= [               h,               H,         hstroke,         Hstroke ]
     };
-    // key <AC07> {
-    //     type= "FOUR_LEVEL_SEMIALPHABETIC",
-    //     symbols[Group1]= [               j,               J,       dead_hook,       dead_horn ]
-    // };
     key <AC07> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               j,               J,       osfBeginLine               ]
+        type= "FOUR_LEVEL_SEMIALPHABETIC",
+        symbols[Group1]= [               j,               J,       dead_hook,       dead_horn ]
     };
-    // key <AC08> {
-    //     type= "FOUR_LEVEL_SEMIALPHABETIC",
-    //     symbols[Group1]= [               k,               K,             kra,       ampersand ]
-    // };
     key <AC08> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               k,               K,             osfEndLine          ]
+        type= "FOUR_LEVEL_SEMIALPHABETIC",
+        symbols[Group1]= [               k,               K,             kra,       ampersand ]
     };
-    // key <AC09> {
-    //     type= "FOUR_LEVEL_ALPHABETIC",
-    //     symbols[Group1]= [               l,               L,         lstroke,         Lstroke ]
-    // };
     key <AC09> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               l,               L,         osfRight                 ]
+        type= "FOUR_LEVEL_ALPHABETIC",
+        symbols[Group1]= [               l,               L,         lstroke,         Lstroke ]
     };
     key <AC10> {
         type= "FOUR_LEVEL_ALPHABETIC",
@@ -1409,13 +1356,9 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
         type= "FOUR_LEVEL_SEMIALPHABETIC",
         symbols[Group1]= [               b,               B, rightdoublequotemark, rightsinglequotemark ]
     };
-    // key <AB06> {
-    //     type= "FOUR_LEVEL_ALPHABETIC",
-    //     symbols[Group1]= [               n,               N,               n,               N ]
-    // };
     key <AB06> {
-        type= "CUST_ALT",
-        symbols[Group1]= [               n,               N,               osfDown            ]
+        type= "FOUR_LEVEL_ALPHABETIC",
+        symbols[Group1]= [               n,               N,               n,               N ]
     };
     key <AB07> {
         type= "FOUR_LEVEL_SEMIALPHABETIC",
@@ -1443,7 +1386,7 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
         type= "FOUR_LEVEL",
         symbols[Group1]= [           space,           space,           space,    nobreakspace ]
     };
-    key <CAPS> {         [          Escape ] };
+    key <CAPS> {         [       Caps_Lock ] };
     key <FK01> {
         type= "CTRL+ALT",
         symbols[Group1]= [              F1,              F1,              F1,              F1, XF86Switch_VT_1 ]
@@ -1677,6 +1620,7 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
     modifier_map Shift { <LFSH> };
     modifier_map Shift { <RTSH> };
     modifier_map Mod1 { <LALT> };
+    modifier_map Lock { <CAPS> };
     modifier_map Mod2 { <NMLK> };
     modifier_map Mod5 { <LVL3> };
     modifier_map Control { <RCTL> };
