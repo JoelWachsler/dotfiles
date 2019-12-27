@@ -689,9 +689,11 @@ xkb_types "complete" {
         map[Shift] = Level2;
         map[Shift+Alt] = Level3;
         map[Alt] = Level3;
+        map[Control] = Level4;
         level_name[Level1] = "Base";
         level_name[Level2] = "Shift";
         level_name[Level3] = "Lock";
+        level_name[Level4] = "Control";
     };
 };
 
@@ -1370,7 +1372,7 @@ xkb_symbols "pc+se(nodeadkeys)+inet(evdev)" {
     // };
     key <AC09> {
         type= "CUST_ALT",
-        symbols[Group1]= [               l,               L,         osfRight                 ]
+        symbols[Group1]= [               l,               L,         osfRight ]
     };
     key <AC10> {
         type= "FOUR_LEVEL_ALPHABETIC",
