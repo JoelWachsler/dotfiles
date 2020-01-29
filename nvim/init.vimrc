@@ -125,7 +125,7 @@ Plug 'alvan/vim-closetag', {'for': ['html']}
 " C++ Plugins
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': ['cpp', 'cc', 'h', 'hpp']}
 " Rust plugins
-Plug 'rust-lang/rust', {'for': ['rs']}
+" Plug 'rust-lang/rust', {'for': ['rs']}
 
 " Add plugins to &runtimepath
 call plug#end()
