@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 
-import subprocess, os, dbus
-
-def expand(command):
-  return os.path.expandvars(command)
-
-def cmd(command):
-  subprocess.call(expand(command), shell=True)
+import dbus
+from arch.util import cmd
 
 def setwallpaper(filepath, plugin = 'org.kde.image'):
   script = """

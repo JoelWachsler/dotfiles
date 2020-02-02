@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess, os, shutil
+from util import cmd, run, cp, rm
 
 # --------------- CONSTANTS START ---------------
 # Swap size is in MiB
@@ -12,26 +13,13 @@ SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
 # --------------- CONSTANTS END ---------------
 
 # --------------- UTILS START ---------------
-def cmd(command):
-  return subprocess.call(command, shell=True)
-
-def run(command):
-  return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
-
 def cprint(str):
   print(f'--- {str} ---')
 
 def chroot(command):
   cmd(f'arch-chroot /mnt {command}')
-
-def cp(fromFile, toFile):
-  return shutil.copy(fromFile, toFile)
-
 def cpFromVariousToEtc(file):
   return cp(f'./various-files/{file}', f'/mnt/etc/{file}')
-
-def rm(file):
-  os.remove(file)
 
 def getScript(scriptName):
   return f'./scripts/{scriptName}'

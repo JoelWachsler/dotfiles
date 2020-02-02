@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-import subprocess, os
-
-def cmd(command):
-  return subprocess.check_call(os.path.expandvars(command), shell=True)
+from arch.util import cmd
 
 cmd('ln -s $HOME/dotfiles/vscode/*.json $HOME/Code/User/')
 

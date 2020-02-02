@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-import argparse, subprocess, os
-
-def cmd(command):
-  subprocess.call(command, shell=True)
+import argparse
+from arch.util import cmd
 
 parser = argparse.ArgumentParser(description='Utility script used to run another script as the provided user. This script will also automatically cd into the home folder of the provided user.')
 parser.add_argument('user', help='The user to run the script as')
