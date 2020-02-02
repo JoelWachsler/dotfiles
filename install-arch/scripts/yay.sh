@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sudo pacman -Syu
+
 # Just to be sure
 rm -rf yay
 

@@ -84,7 +84,7 @@ def diskSetup():
   cmd(f'parted {diskToInstallTo} mkpart primary ext4 {SWAP_SIZE_TO}MiB 100%')
   cprint('The final partition is as follows:')
   cmd(f'parted {diskToInstallTo} print')
-  input()
+  input('Press enter to continue...')
 
   cprint('Formatting')
   cmd(f'mkfs.vfat {diskToInstallTo}1')
@@ -107,7 +107,7 @@ def initIntoMnt():
 
   # Install essential packages
   cprint('Installing essentials')
-  cmd('pacstrap /mnt base base-devel linux linux-firmware neovim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish git python python-pip cmake')
+  cmd('pacstrap /mnt base base-devel linux linux-firmware neovim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish git python python-pip cmake xz pigz')
 
 def generateFStab():
   cprint('Generating fstab')

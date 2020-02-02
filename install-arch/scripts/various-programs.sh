@@ -17,7 +17,6 @@ yay -S jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk1
   neovim \
   lutris \
   steam \
-  pigz xz \
   # Mouse config util
   piper \
   vlc \
