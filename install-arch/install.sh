@@ -2,13 +2,16 @@
 
 import subprocess, os, shutil
 
+# --------------- CONSTANTS START ---------------
 # Swap size is in MiB
 UEFI_FROM = 1
 UEFI_TO = 261
 SWAP_SIZE = 6000
 SWAP_SIZE_FROM = UEFI_TO
 SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
+# --------------- CONSTANTS END ---------------
 
+# --------------- UTILS START ---------------
 def cmd(command):
   return subprocess.check_call(command, shell=True)
 
@@ -29,6 +32,39 @@ def cpFromVariousToEtc(file):
 
 def rm(file):
   os.remove(file)
+
+def getScript(scriptName):
+  return f'./scripts/{scriptName}'
+
+def runScript(script, user):
+  try:
+    cprint(f'Running the script: {script}')
+    runAsUserScript = getScript('run-as-user.sh')
+    runAsUserScriptInMntPath = '/mnt/run-as-user.sh'
+    cp(runAsUserScript, runAsUserScriptInMntPath)
+    cmd(f'chmod +x {runAsUserScriptInMntPath}')
+
+    scriptMntPath = f'/mnt/home/{user}/script.sh'
+    cp(getScript(script), scriptMntPath)
+    cmd(f'chmod +x {scriptMntPath}')
+
+    chroot(f'./run-as-user.sh {user} script.sh')
+  except Exception as e:
+    raise Exception(f'Failed to run the script: {script} - {e}')
+  finally:
+    # Cleanup
+    rm(runAsUserScriptInMntPath)
+    rm(scriptMntPath)
+
+def getFileContents(file):
+  with open(file, 'r') as f:
+    return f.read()
+
+def writeFileContent(file, content):
+  with open(file, 'w') as f:
+    f.write(content)
+
+# --------------- UTILS END ---------------
 
 def diskSetup():
   cprint('The following disks are available')
@@ -100,14 +136,6 @@ def setupNewSystem():
   cpFromVariousToEtc('hosts')
   chroot('systemctl enable dhcpcd')
 
-def getFileContents(file):
-  with open(file, 'r') as f:
-    return f.read()
-
-def writeFileContent(file, content):
-  with open(file, 'w') as f:
-    f.write(content)
-
 def setupUsers(user):
   cprint('Change root password')
   chroot('passwd')
@@ -116,42 +144,25 @@ def setupUsers(user):
   cprint('Password for the new user:')
   chroot(f'passwd {user}')
 
-  contentToWrite = getFileContents('/mnt/etc/sudoers')
+  sudoers = '/mnt/etc/sudoers'
+  contentToWrite = getFileContents(sudoers)
     .replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL')
     .replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')
 
-  writeFileContent('/mnt/etc/sudoers', contentToWrite)
+  writeFileContent(sudoers, contentToWrite)
+
+def enableMultiLibs():
+  cprint('Enabling multilibs')
+  pacmanConf = '/mnt/etc/pacman.conf'
+  contentToWrite = getFileContents(pacmanConf)
+    .replace('#[multilib]\n#Include = /etc/pacman.d/mirrorlist', '[multilib]\nInclude = /etc/pacman.d/mirrorlist')
+
+  writeFileContent(pacmanConf, contentToWrite)
 
 def installGrub():
   cprint('Installing grub')
   chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
-
-def getScript(scriptName):
-  return f'./scripts/{scriptName}'
-
-def runScript(script, user):
-  try:
-    cprint(f'Running the script: {script}')
-    runAsUserScript = getScript('run-as-user.sh')
-    runAsUserScriptInMntPath = '/mnt/run-as-user.sh'
-    cp(runAsUserScript, runAsUserScriptInMntPath)
-    cmd(f'chmod +x {runAsUserScriptInMntPath}')
-
-    scriptMntPath = f'/mnt/home/{user}/script.sh'
-    cp(getScript(script), scriptMntPath)
-    cmd(f'chmod +x {scriptMntPath}')
-
-    chroot(f'./run-as-user.sh {user} script.sh')
-  except Exception as e:
-    raise Exception(f'Failed to run the script: {script} - {e}')
-  finally:
-    # Cleanup
-    rm(runAsUserScriptInMntPath)
-    rm(scriptMntPath)
-
-def enableMultiLibs():
-  cprint('Enabling multilibs')
 
 def postInstall(user):
   runScript('install-dotfiles.sh')
@@ -175,6 +186,7 @@ def main():
   setupNewSystem()
   setupUsers(user)
   installGrub()
+  enableMultiLibs()
   postInstall(user)
   cprint('DONE!')
 
