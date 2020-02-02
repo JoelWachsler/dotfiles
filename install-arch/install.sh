@@ -13,7 +13,7 @@ SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
 
 # --------------- UTILS START ---------------
 def cmd(command):
-  return subprocess.check_call(command, shell=True)
+  return subprocess.call(command, shell=True)
 
 def run(command):
   return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
@@ -162,15 +162,6 @@ def installGrub():
   chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
-def postInstall(user):
-  runScript('yay.sh', user)
-  runScript('kde.sh', user)
-  # runScript('i3.sh', user)
-  runScript('various-programs.sh', user)
-  runScript('dislocker.sh', user)
-  runScript('generate-ssh-key.sh', user)
-  runScript('install-dotfiles.sh', user)
-
 def main():
   user = input('Which user shall I install as: ')
   # Locale and clock syncing
@@ -184,7 +175,7 @@ def main():
   setupUsers(user)
   installGrub()
   enableMultiLibs()
-  postInstall(user)
+  runScript('install-dotfiles.sh', user)
   cprint('DONE!')
 
 if __name__ == '__main__':

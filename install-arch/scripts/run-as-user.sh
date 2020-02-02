@@ -3,7 +3,7 @@
 import argparse, subprocess, os
 
 def cmd(command):
-  return subprocess.check_call(command, shell=True)
+  subprocess.call(command, shell=True)
 
 parser = argparse.ArgumentParser(description='Utility script used to run another script as the provided user. This script will also automatically cd into the home folder of the provided user.')
 parser.add_argument('user', help='The user to run the script as')
