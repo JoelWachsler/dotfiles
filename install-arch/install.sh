@@ -175,7 +175,7 @@ def main():
   setupUsers(user)
   installGrub()
   enableMultiLibs()
-  runScript('install-dotfiles.sh', user)
+  runScript('post-install.sh', user)
   cprint('DONE!')
 
 if __name__ == '__main__':
