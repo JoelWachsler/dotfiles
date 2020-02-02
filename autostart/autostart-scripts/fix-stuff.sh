@@ -8,5 +8,6 @@ $HOME/dotfiles/screen/fix-screen.sh
 sleep 2
 
 echo 'Fixing shortcuts'
-$HOME/dotfiles/fix-shortcuts.sh
+# The shortcuts are reset for some reason...
+sed -i 's/Alt+F1/none/g' $HOME/.config/kglobalshortcutsrc && kquitapp5 kglobalaccel && kglobalaccel5&
 

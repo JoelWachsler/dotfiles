@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append('../')
+from mutil import cmd
+
+cmd('pip install dbus-python --user')
 import dbus
-from arch.util import cmd
 
 def setwallpaper(filepath, plugin = 'org.kde.image'):
   script = """

@@ -11,13 +11,11 @@ yay -S jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk1
   google-chrome \
   nodejs yarn \
   docker docker-compose \
-  # PDF/SVG viewer
   gwenview \
   autokey \
   neovim \
   lutris \
   steam \
-  # Mouse config util
   piper \
   vlc \
   ffmpeg \

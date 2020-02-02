@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-from arch.util import cmd
+import sys
+sys.path.append('../')
+from mutil import cmd
 
 email = input('Input email: ')
 cmd(f'ssh-keygen -t rsa -b 4096 -C "{email}" && ssh-add')

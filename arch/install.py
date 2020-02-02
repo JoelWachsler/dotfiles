@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-
-import subprocess, os, shutil
-from util import cmd, run, cp, rm
+import os
+from mutil import cmd, run, cp, rm
 
 # --------------- CONSTANTS START ---------------
 # Swap size is in MiB
@@ -10,39 +8,37 @@ UEFI_TO = 261
 SWAP_SIZE = 6000
 SWAP_SIZE_FROM = UEFI_TO
 SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 # --------------- CONSTANTS END ---------------
 
 # --------------- UTILS START ---------------
+def rel(path):
+  return f'{DIR_PATH}/{path}'
+
 def cprint(str):
   print(f'--- {str} ---')
 
 def chroot(command):
   cmd(f'arch-chroot /mnt {command}')
-def cpFromVariousToEtc(file):
-  return cp(f'./various-files/{file}', f'/mnt/etc/{file}')
 
-def getScript(scriptName):
-  return f'./scripts/{scriptName}'
+def cpFromVariousToEtc(file):
+  return cp(rel(f'various-files/{file}'), f'/mnt/etc/{file}')
 
 def runScript(script, user):
   try:
     cprint(f'Running the script: {script}')
-    runAsUserScript = getScript('run-as-user.sh')
-    runAsUserScriptInMntPath = '/mnt/run-as-user.sh'
-    cp(runAsUserScript, runAsUserScriptInMntPath)
-    cmd(f'chmod +x {runAsUserScriptInMntPath}')
+    userHome = f'/home/{user}'
+    userHomePathDotfiles = f'/mnt{userHome}/dotfiles'
 
-    scriptMntPath = f'/mnt/home/{user}/script.sh'
-    cp(getScript(script), scriptMntPath)
-    cmd(f'chmod +x {scriptMntPath}')
+    # Just to be sure
+    rm(userHomePathDotfiles)
 
-    chroot(f'./run-as-user.sh {user} script.sh')
+    # Lets copy ourselves into the installation
+    cp(rel('../'), userHomePathDotfiles)
+
+    chroot(f'{userHome}/dotfiles/dotfiles.sh --post_install_arch --user {user} --script {script}')
   except Exception as e:
     raise Exception(f'Failed to run the script: {script} - {e}')
-  finally:
-    # Cleanup
-    rm(runAsUserScriptInMntPath)
-    rm(scriptMntPath)
 
 def getFileContents(file):
   with open(file, 'r') as f:
@@ -53,6 +49,11 @@ def writeFileContent(file, content):
     f.write(content)
 
 # --------------- UTILS END ---------------
+
+def parted(disk):
+  def partedOnDisk(command):
+    return cmd(f'parted {disk} {command}')
+  return partedOnDisk
 
 def diskSetup():
   cprint('The following disks are available')
@@ -65,13 +66,15 @@ def diskSetup():
   cprint('Wiping the disk...')
   cmd(f'wipefs -a {diskToInstallTo}')
 
-  cmd(f'parted {diskToInstallTo} mklabel gpt')
-  cmd(f'parted {diskToInstallTo} mkpart primary fat32 {UEFI_FROM}MiB {UEFI_TO}MiB')
-  cmd(f'parted {diskToInstallTo} set 1 esp on')
-  cmd(f'parted {diskToInstallTo} mkpart primary linux-swap {SWAP_SIZE_FROM}MiB {SWAP_SIZE_TO}MiB')
-  cmd(f'parted {diskToInstallTo} mkpart primary ext4 {SWAP_SIZE_TO}MiB 100%')
+  partedDisk = parted(diskToInstallTo)
+  partedDisk('mklabel gpt')
+  partedDisk(f'mkpart primary fat32 {UEFI_FROM}MiB {UEFI_TO}MiB')
+  partedDisk('set 1 esp on')
+  partedDisk(f'mkpart primary linux-swap {SWAP_SIZE_FROM}MiB {SWAP_SIZE_TO}MiB')
+  partedDisk(f'mkpart primary ext4 {SWAP_SIZE_TO}MiB 100%')
+
   cprint('The final partition is as follows:')
-  cmd(f'parted {diskToInstallTo} print')
+  partedDisk('print')
   input('Press enter to continue...')
 
   cprint('Formatting')
@@ -91,7 +94,7 @@ def diskSetup():
 def initIntoMnt():
   # Install mirror-lists
   cprint('Updating mirrors')
-  cp('./various-files/mirrorlist', '/etc/pacman.d/mirrorlist')
+  cp(rel('various-files/mirrorlist'), '/etc/pacman.d/mirrorlist')
 
   # Install essential packages
   cprint('Installing essentials')
@@ -99,9 +102,7 @@ def initIntoMnt():
 
 def generateFStab():
   cprint('Generating fstab')
-  fstabInfo = run('genfstab -U /mnt')
-  with open('/mnt/etc/fstab', 'w') as f:
-    f.write(fstabInfo.stdout)
+  writeFileContent('/mnt/etc/fstab', run('genfstab -U /mnt').stdout)
 
 def setupNewSystem():
   # Setup region
@@ -150,7 +151,7 @@ def installGrub():
   chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
-def main():
+def install():
   user = input('Which user shall I install as: ')
   # Locale and clock syncing
   cmd('loadkeys sv-latin1')
@@ -165,6 +166,3 @@ def main():
   enableMultiLibs()
   runScript('post-install.sh', user)
   cprint('DONE!')
-
-if __name__ == '__main__':
-  main()

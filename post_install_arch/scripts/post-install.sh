@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-git clone https://github.com/JoelWachsler/dotfiles
-cd $HOME/dotfiles/install-arch/scripts
+cd $HOME/dotfiles/arch/scripts
 ./yay.sh
 ./kde.sh
 # ./i3.sh

@@ -10,8 +10,14 @@ def run(command):
   return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 
 def cp(fromFile, toFile):
-  return shutil.copy(fromFile, toFile)
+  if os.path.isfile(fromFile):
+    return shutil.copy(fromFile, toFile)
+  else:
+    return shutil.copytree(fromFile, toFile)
 
 def rm(file):
-  os.remove(file)
+  if os.path.exists(file):
+    shutil.rmtree(file)
 
+def exists(file):
+  return os.path.exists(file)
