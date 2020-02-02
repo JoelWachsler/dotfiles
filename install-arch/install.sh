@@ -84,6 +84,7 @@ def diskSetup():
   cmd(f'parted {diskToInstallTo} mkpart primary ext4 {SWAP_SIZE_TO}MiB 100%')
   cprint('The final partition is as follows:')
   cmd(f'parted {diskToInstallTo} print')
+  input()
 
   cprint('Formatting')
   cmd(f'mkfs.vfat {diskToInstallTo}1')
@@ -145,17 +146,14 @@ def setupUsers(user):
   chroot(f'passwd {user}')
 
   sudoers = '/mnt/etc/sudoers'
-  contentToWrite = getFileContents(sudoers)
-    .replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL')
-    .replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')
+  contentToWrite = getFileContents(sudoers).replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL').replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')
 
   writeFileContent(sudoers, contentToWrite)
 
 def enableMultiLibs():
   cprint('Enabling multilibs')
   pacmanConf = '/mnt/etc/pacman.conf'
-  contentToWrite = getFileContents(pacmanConf)
-    .replace('#[multilib]\n#Include = /etc/pacman.d/mirrorlist', '[multilib]\nInclude = /etc/pacman.d/mirrorlist')
+  contentToWrite = getFileContents(pacmanConf).replace('#[multilib]\n#Include = /etc/pacman.d/mirrorlist', '[multilib]\nInclude = /etc/pacman.d/mirrorlist')
 
   writeFileContent(pacmanConf, contentToWrite)
 
