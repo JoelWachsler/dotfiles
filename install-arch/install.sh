@@ -165,7 +165,6 @@ def installGrub():
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
 def postInstall(user):
-  runScript('install-dotfiles.sh')
   runScript('yay.sh', user)
   runScript('kde.sh', user)
   # runScript('i3.sh', user)
