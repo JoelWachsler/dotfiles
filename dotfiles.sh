@@ -3,7 +3,7 @@
 import argparse
 import mutil
 from glob import glob
-from post_install_arch import install as post_install
+from arch_post_install import install as post_install
 import importlib
 import os
 
@@ -47,7 +47,7 @@ def main():
 
   args = parser.parse_args()
 
-  if args.post_install_arch:
+  if args.arch_post_install:
     user = args.user
     script = args.script
 

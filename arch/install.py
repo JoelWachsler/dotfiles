@@ -36,7 +36,7 @@ def runScript(script, user):
     # Lets copy ourselves into the installation
     cp(rel('../'), userHomePathDotfiles)
 
-    chroot(f'{userHome}/dotfiles/dotfiles.sh --post_install_arch --user {user} --script {script}')
+    chroot(f'{userHome}/dotfiles/dotfiles.sh --arch_post_install --user {user} --script {script}')
   except Exception as e:
     raise Exception(f'Failed to run the script: {script} - {e}')
 
