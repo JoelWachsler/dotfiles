@@ -1,0 +1,54 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.fontSize": 16,
+    "editor.fontFamily": "'Meslo LG S', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+    "editor.tabSize": 2,
+    "keyboard.dispatch": "keyCode",
+    "editor.lineNumbers": "relative",
+    "editor.wordWrap": "on",
+    "vim.easymotion": true,
+    "vim.leader": "<space>",
+    "vim.handleKeys": {
+        "<C-f>": false,
+        "<C-c>": false,
+        "<C-v>": false
+    },
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<Leader>", "c", "c"],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.commentLine"
+                }
+            ]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<Leader>", "c", "c"],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.commentLine"
+                }
+            ]
+        }
+    ],
+    "window.zoomLevel": 0,
+    "editor.renderIndentGuides": false,
+    "editor.minimap.enabled": false,
+    "workbench.startupEditor": "none",
+    "cSpell.userWords": [
+        "Whitelisted",
+        "wachsler"
+    ],
+    "latex-workshop.view.pdf.viewer": "browser",
+    "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true
+    },
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "vim.hlsearch": true,
+    "plantuml.exportFormat": "svg"
+}

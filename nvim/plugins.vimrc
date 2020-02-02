@@ -12,8 +12,9 @@ let g:session_autosave = "no"
 " Split-Term
 let g:disable_key_mappings = 0
 
-" NerdCommenter
-let NERDSpaceDelims=1
+" Vim-commentary
+nmap <Leader>cc gcc
+vmap <Leader>cc gcc
 
 " Nerdtree
 let NERDTreeShowHidden=1
@@ -82,4 +83,3 @@ else
   let g:deoplete#sources#clang#libclang_path = "/usr/lib/libclang.so"
   let g:deoplete#sources#clang#clang_header	= "/usr/lib/"
 endif
-

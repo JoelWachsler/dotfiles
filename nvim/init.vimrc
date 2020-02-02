@@ -1,7 +1,8 @@
 call plug#begin('~/.config/nvim/plugged')
 
 " General helpers
-Plug 'scrooloose/nerdcommenter'       " Easier Comments
+" Plug 'preservim/nerdcommenter'        " Easier Comments
+Plug 'tpope/vim-commentary'
 Plug 'atweiden/vim-dragvisuals'       " Drag blocks of code
 Plug 'tpope/vim-repeat'               " Easier repeating
 Plug 'jiangmiao/auto-pairs'           " Auto closing  closing of quotes, parenthesis, brackets, etc.

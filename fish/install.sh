@@ -8,24 +8,20 @@ function install_patched_fonts {
   ./install.sh
   cd ..
   rm -rf fonts
-  echo "--- Successfully installed patched fonts ---"
 }
 
 function install_config_files {
   echo "--- Installing fish config files ---"
   cd $HOME/.config/fish
   ln -s $HOME/dotfiles/fish/*.fish .
-  echo "--- Successfully installed fish config files"
 }
 
 function install_fisherman {
   echo "--- Installing fisherman ---"
   curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
-  echo "--- Successfully installed fisherman ---"
 
   echo "--- Installing plugins ---"
   fisher add decors/fish-colored-man fisherman/z oh-my-fish/theme-agnoster
-  echo "--- Successfully installed plugins ---"
 }
 
 install_patched_fonts

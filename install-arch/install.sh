@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import subprocess, os
+import subprocess, os, shutil
+
 # Swap size is in MiB
 UEFI_FROM = 1
 UEFI_TO = 261
@@ -8,25 +9,34 @@ SWAP_SIZE = 6000
 SWAP_SIZE_FROM = UEFI_TO
 SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
 
-def arg(command):
-  return os.path.expandvars(command).split()
-
 def cmd(command):
-  return subprocess.call(arg(command))
+  return subprocess.check_call(command, shell=True)
 
 def run(command):
-  return subprocess.run(arg(command), stdout=subprocess.PIPE, universal_newlines=True)
+  return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 
 def cprint(str):
   print(f'--- {str} ---')
+
+def chroot(command):
+  cmd(f'arch-chroot /mnt {command}')
+
+def cp(fromFile, toFile):
+  return shutil.copy(fromFile, toFile)
+
+def cpFromVariousToEtc(file):
+  return cp(f'./various-files/{file}', f'/mnt/etc/{file}')
+
+def rm(file):
+  os.remove(file)
 
 def diskSetup():
   cprint('The following disks are available')
   cmd('lsblk')
   cprint('END')
 
-  cprint('Which disk should I install to? ex: sdX')
-  diskToInstallTo = f'/dev/{input()}'
+  disk = input('Which disk should I install to? ex: sdX: ')
+  diskToInstallTo = f'/dev/{disk}'
 
   cprint('Wiping the disk...')
   cmd(f'wipefs -a {diskToInstallTo}')
@@ -56,21 +66,17 @@ def diskSetup():
 def initIntoMnt():
   # Install mirror-lists
   cprint('Updating mirrors')
-  cmd('cp ../various-files/mirrorlist /etc/pacman.d/mirrorlist')
+  cp('./various-files/mirrorlist', '/etc/pacman.d/mirrorlist')
 
   # Install essential packages
   cprint('Installing essentials')
-  cmd('pacstrap /mnt base base-devel linux linux-firmware vim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish')
+  cmd('pacstrap /mnt base base-devel linux linux-firmware neovim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish git python python-pip cmake')
 
 def generateFStab():
   cprint('Generating fstab')
   fstabInfo = run('genfstab -U /mnt')
   with open('/mnt/etc/fstab', 'w') as f:
     f.write(fstabInfo.stdout)
-  cprint('Done generating fstab!')
-
-def chroot(command):
-  cmd(f'arch-chroot /mnt {command}')
 
 def setupNewSystem():
   # Setup region
@@ -83,94 +89,82 @@ def setupNewSystem():
 
   # Generate localization
   cprint('Generate localization')
-  cmd('cp ../various-files/locale.gen /mnt/etc/locale.gen')
+  cpFromVariousToEtc('locale.gen')
   chroot('locale-gen')
 
-  cmd('cp ../various-files/locale.conf /mnt/etc/locale.conf')
-  cmd('cp ../various-files/vconsole.conf /mnt/etc/vconsole.conf')
+  cpFromVariousToEtc('locale.conf')
+  cpFromVariousToEtc('vconsole.conf')
 
   # Fix networking
-  cmd('cp ../various-files/hostname /mnt/etc/hostname')
-  cmd('cp ../various-files/hosts /mnt/etc/hosts')
+  cpFromVariousToEtc('hostname')
+  cpFromVariousToEtc('hosts')
   chroot('systemctl enable dhcpcd')
 
-def setupUsers():
+def getFileContents(file):
+  with open(file, 'r') as f:
+    return f.read()
+
+def writeFileContent(file, content):
+  with open(file, 'w') as f:
+    f.write(content)
+
+def setupUsers(user):
   cprint('Change root password')
   chroot('passwd')
 
-  cprint('Your username: ')
-  username = input()
-  chroot(f'useradd -m -G wheel -s /usr/bin/fish {username}')
+  chroot(f'useradd -m -G wheel -s /usr/bin/fish {user}')
   cprint('Password for the new user:')
-  chroot(f'passwd {username}')
+  chroot(f'passwd {user}')
 
-  contentToWrite = ''
-  with open('/mnt/etc/sudoers', 'r') as f:
-    content = f.read()
-    content = content.replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL')
-    contentToWrite = content.replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{username} ALL=(ALL) ALL\n')
+  contentToWrite = getFileContents('/mnt/etc/sudoers')
+    .replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL')
+    .replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')
 
-  with open('/mnt/etc/sudoers', 'w') as f:
-    f.write(contentToWrite)
+  writeFileContent('/mnt/etc/sudoers', contentToWrite)
 
 def installGrub():
   cprint('Installing grub')
   chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
-def installYay():
-  cprint('Installing yay')
-  chroot('git clone git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay')
+def getScript(scriptName):
+  return f'./scripts/{scriptName}'
 
-def installVariousPrograms():
-  cprint('Installing various programs')
-  chroot("""yay -Syu && yay -S fish \
-    jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk11-src visualvm \
-    intellij-idea-ultimate-edition \
-    discord \
-    spotify \
-    visual-studio-code-bin \
-    ttf-meslo ttf-ms-fonts ttf-opensansss \
-    qbittorrent \
-    bluez bluez-utils bluedevil pulseaudio-bluetooth \
-    google-chrome \
-    nodejs yarn \
-    docker docker-compose \
-    # PDF/SVG viewer
-    gwenview \
-    autokey \
-    neovim \
-    python \
-    lutris \
-    steam \
-    pigz xz \
-    # Mouse config util
-    piper \
-    vlc \
-    ffmpeg \
-    mullvad-vpn-bin \
-    openssh \
-    ranger \
-    rsync""")
+def runScript(script, user):
+  try:
+    cprint(f'Running the script: {script}')
+    runAsUserScript = getScript('run-as-user.sh')
+    runAsUserScriptInMntPath = '/mnt/run-as-user.sh'
+    cp(runAsUserScript, runAsUserScriptInMntPath)
+    cmd(f'chmod +x {runAsUserScriptInMntPath}')
 
-def installKde():
-  cprint('Installing KDE')
-  chroot('yay -Syu && yay -S plasma-meta sddm')
+    scriptMntPath = f'/mnt/home/{user}/script.sh'
+    cp(getScript(script), scriptMntPath)
+    cmd(f'chmod +x {scriptMntPath}')
 
-def installDislocker():
-  cprint('Installing dislocker')
-  chroot('git clone https://github.com/Aorimn/dislocker.git && cd dislocker && cmake . && sudo make install cd .. && rm -rf dislocker')
-
-def generateSshKey():
-  cprint('Generating ssh key')
-  cprint('Input email: ')
-  email = input()
-  chroot(f'ssh-keygen -t rsa -b 4096 -C "{email}" && ssh-add')
+    chroot(f'./run-as-user.sh {user} script.sh')
+  except Exception as e:
+    raise Exception(f'Failed to run the script: {script} - {e}')
+  finally:
+    # Cleanup
+    rm(runAsUserScriptInMntPath)
+    rm(scriptMntPath)
 
 def enableMultiLibs():
   cprint('Enabling multilibs')
 
+def postInstall(user):
+  runScript('install-dotfiles.sh')
+  runScript('yay.sh', user)
+  runScript('kde.sh', user)
+  # runScript('i3.sh', user)
+  runScript('various-programs.sh', user)
+  runScript('dislocker.sh', user)
+  runScript('generate-ssh-key.sh', user)
+  runScript('install-dotfiles.sh', user)
+
 def main():
+  user = input('Which user shall I install as: ')
   # Locale and clock syncing
   cmd('loadkeys sv-latin1')
   cmd('timedatectl set-ntp true')
@@ -179,13 +173,9 @@ def main():
   initIntoMnt()
   generateFStab()
   setupNewSystem()
-  setupUsers()
+  setupUsers(user)
   installGrub()
-  installYay()
-  installKde()
-  installVariousPrograms()
-  installDislocker()
-  generateSshKey()
+  postInstall(user)
   cprint('DONE!')
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 " Change dir for the file we're currently editing
 nnoremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
 
-nmap <Leader><Leader> V
+nnoremap <Leader><Leader> V
 
 " Easier to select text I just pasted
 noremap gV `[v`]
