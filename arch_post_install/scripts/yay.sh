@@ -14,7 +14,7 @@ rm -rf yay
 
 git clone https://aur.archlinux.org/yay.git
 cd yay
-makepkg -si
+makepkg -si --noconfirm
 
 # Cleanup
 cd ..

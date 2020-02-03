@@ -22,4 +22,6 @@ yay -S jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk1
   mullvad-vpn-bin \
   openssh \
   ranger \
-  rsync
+  rsync \
+  openssh \
+  --noconfirm

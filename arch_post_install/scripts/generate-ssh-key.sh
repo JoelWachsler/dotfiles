@@ -1,8 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
 
-import sys
-sys.path.append('../')
-from mutil import cmd
-
-email = input('Input email: ')
-cmd(f'ssh-keygen -t rsa -b 4096 -C "{email}" && ssh-add')
+read -p 'Input email: ' email
+ssh-keygen -t rsa -b 4096 -C "$email"
+ssh-add

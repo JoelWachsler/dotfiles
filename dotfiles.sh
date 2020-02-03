@@ -44,10 +44,15 @@ def main():
 
   parser.add_argument('--user', help='The user to install as if running post install arch script')
   parser.add_argument('--script', help='The script to run if running the post install arch script')
+  parser.add_argument('--everything', help='Install everything (except installing arch and post-install)', action='store_true', default=False)
 
   args = parser.parse_args()
 
-  if args.arch_post_install:
+  if args.everything:
+    for entry in installEntries:
+      if entry.name != 'arch' and entry.name != 'arch_post_install':
+        entry.run()
+  elif args.arch_post_install:
     user = args.user
     script = args.script
 
