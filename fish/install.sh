@@ -27,6 +27,3 @@ end
 install_patched_fonts
 install_config_files
 install_fisherman
-
-echo "--- Done ---"
-

@@ -2,7 +2,6 @@ dbaeumer.vscode-eslint
 eamodio.gitlens
 EditorConfig.EditorConfig
 eg2.tslint
-James-Yu.latex-workshop
 jebbs.plantuml
 kumar-harsh.graphql-for-vscode
 mikestead.dotenv
@@ -10,7 +9,6 @@ ms-azuretools.vscode-docker
 ms-python.python
 msjsdiag.debugger-for-chrome
 octref.vetur
-robinbentley.sass-indented
 spywhere.guides
 streetsidesoftware.code-spell-checker
 vscodevim.vim

@@ -4,7 +4,7 @@ def expand(command):
   return os.path.expandvars(command)
 
 def cmd(command):
-  return subprocess.call(expand(command), shell=True)
+  return subprocess.check_call(expand(command), shell=True)
 
 def run(command):
   return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)

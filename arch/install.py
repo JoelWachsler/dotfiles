@@ -127,12 +127,25 @@ def setupNewSystem():
   chroot('systemctl enable dhcpcd')
 
 def setupUsers(user):
-  cprint('Change root password')
-  chroot('passwd')
+  cprint('Changing the shell for root')
+  chroot('chsh -s /usr/bin/fish')
+
+  while True:
+    try:
+      cprint('Change root password')
+      chroot('passwd')
+      break
+    except:
+      pass
 
   chroot(f'useradd -m -G wheel -s /usr/bin/fish {user}')
-  cprint('Password for the new user:')
-  chroot(f'passwd {user}')
+  while True:
+    try:
+      cprint('Password for the new user:')
+      chroot(f'passwd {user}')
+      break
+    except:
+      pass
 
   sudoers = '/mnt/etc/sudoers'
   contentToWrite = getFileContents(sudoers).replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL').replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')
