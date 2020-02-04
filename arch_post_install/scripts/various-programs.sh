@@ -25,4 +25,5 @@ yay -S jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk1
   rsync \
   openssh \
   git \
+  nvidia \
   --noconfirm
