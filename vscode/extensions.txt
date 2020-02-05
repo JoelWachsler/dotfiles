@@ -1,7 +1,6 @@
 dbaeumer.vscode-eslint
 eamodio.gitlens
 EditorConfig.EditorConfig
-eg2.tslint
 jebbs.plantuml
 kumar-harsh.graphql-for-vscode
 mikestead.dotenv
