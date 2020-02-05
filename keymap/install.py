@@ -16,7 +16,9 @@ def updateProfile():
   writeFileContents(profileLocation, 'setxkbmap -layout se -option nodeadkeys,caps:escape')
 
 def updateAutokeyFolders():
-  fileLocation = f'{HOME}/.config/autokey/autokey.json'
+  fileDir = f'{HOME}/.config/autokey'
+  fileLocation = f'{fileDir}/autokey.json'
+  cmd(f'mkdir -p {fileDir}')
   content = getFileContents(fileLocation)
   jsonContent = json.loads(content)
   jsonContent['folders'] = f'{HOME}/dotfiles/keymap/my-rebings'
