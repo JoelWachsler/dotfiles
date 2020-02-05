@@ -17,7 +17,7 @@ def updateAutokeyFolders():
   cmd(f'mkdir -p {fileDir}')
   content = getFileContents(fileLocation)
   jsonContent = json.loads(content)
-  jsonContent['folders'] = f'{HOME}/dotfiles/keymap/my-rebings'
+  jsonContent['folders'] = f'{HOME}/dotfiles/autokey/my-rebinds'
   resultingContent = json.dumps(jsonContent, indent=4)
   writeFileContents(resultingContent)
 
