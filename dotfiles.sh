@@ -48,9 +48,11 @@ def main():
 
   args = parser.parse_args()
 
+  specialEntries = ['arch', 'arch_post_install', 'autokey']
+
   if args.everything:
     for entry in installEntries:
-      if entry.name != 'arch' and entry.name != 'arch_post_install':
+      if entry.name not in specialEntries:
         entry.run()
   elif args.arch_post_install:
     user = args.user
