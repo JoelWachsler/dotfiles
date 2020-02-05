@@ -121,6 +121,9 @@ def setupNewSystem():
   cpFromVariousToEtc('locale.conf')
   cpFromVariousToEtc('vconsole.conf')
 
+  # Update makepkg
+  cpFromVariousToEtc('makepkg.conf')
+
   # Fix networking
   cpFromVariousToEtc('hostname')
   cpFromVariousToEtc('hosts')
