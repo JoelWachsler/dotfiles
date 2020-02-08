@@ -17,9 +17,9 @@ def updateAutokeyFolders():
   cmd(f'mkdir -p {fileDir}')
   content = getFileContents(fileLocation)
   jsonContent = json.loads(content)
-  jsonContent['folders'] = f'{HOME}/dotfiles/autokey/my-rebinds'
+  jsonContent['folders'] = [f'{HOME}/dotfiles/autokey/my-rebinds']
   resultingContent = json.dumps(jsonContent, indent=4)
-  writeFileContents(resultingContent)
+  writeFileContents(fileLocation, resultingContent)
 
 def doc():
   return 'Adds autokey configuration files to the config directory'

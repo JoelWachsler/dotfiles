@@ -202,7 +202,7 @@ def updateMkinitcpio():
   cprint('Configuring Mkinitcpio')
   file = '/mnt/etc/mkinitcpio.conf'
   content = getFileContents(file)
-  content = content.replace('#COMPRESSION="xz"', 'COMPRESSION="xz"')
+  content = content.replace('#COMPRESSION="xz"', '#COMPRESSION="xz"\nCOMPRESSION="pigz"')
   pattern = r'^HOOKS=\((.*)\)$'
   hooks = re.findall(pattern, content, re.MULTILINE)[0]
   hooks = hooks.replace('block', 'block keymap encrypt')
