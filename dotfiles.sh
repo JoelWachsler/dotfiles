@@ -23,7 +23,6 @@ class InstallScript:
         return self.pythonInstallScript().doc()
       except Exception as e:
         # There is no documentation for this module
-        print(e)
         return ''
     else:
       return ''
@@ -33,7 +32,7 @@ class InstallScript:
 
   def run(self):
     if self.isPythonScript():
-      self.pythonInstallScript.install()
+      self.pythonInstallScript().install()
     else:
       mutil.cmd(f'./{self.name}/{self.script}')
 
