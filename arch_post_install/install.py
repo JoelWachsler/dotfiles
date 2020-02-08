@@ -6,4 +6,4 @@ def doc():
   return 'Used to install various programs after arch linux has been installed'
 
 def install():
-  cmd('./scripts/post-install.sh')
+  cmd('./arch_post_install/scripts/post-install.sh')

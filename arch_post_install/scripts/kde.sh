@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-yay -S
+yay -S \
   sddm \
   plasma \
   networkmanager plasma-nm \

@@ -13,26 +13,29 @@ class InstallScript:
   def __init__(self, name, script):
     self.name = name.replace('/', '')
     self.script = script
-  
+
+  @property
   def isPythonScript(self):
     return self.script.endswith('.py')
   
+  @property
   def documentation(self):
     if self.isPythonScript:
       try:
-        return self.pythonInstallScript().doc()
+        return self.pythonInstallScript.doc()
       except Exception as e:
         # There is no documentation for this module
         return ''
     else:
       return ''
   
+  @property
   def pythonInstallScript(self):
     return importlib.import_module(self.name + '.install')
 
   def run(self):
-    if self.isPythonScript():
-      self.pythonInstallScript().install()
+    if self.isPythonScript:
+      self.pythonInstallScript.install()
     else:
       mutil.cmd(f'./{self.name}/{self.script}')
 
@@ -52,9 +55,9 @@ def main():
       installEntries.append(InstallScript(dir, 'install.py'))
 
   for entry in installEntries:
-    parser.add_argument(f'--{entry.name}', help=entry.documentation(), dest=f'{entry.name}', action='store_true', default=False)
+    parser.add_argument(f'--{entry.name}', help=entry.documentation, dest=f'{entry.name}', action='store_true', default=False)
 
-  specialEntries = ['arch', 'arch_post_install', 'virtualbox_guest']
+  specialEntries = ['arch', 'arch_post_install', 'virtualbox_guest', 'autokey']
   parser.add_argument('--everything', help=f'Install everything (except: {", ".join(specialEntries)})', action='store_true', default=False)
 
   args = parser.parse_args()
@@ -64,7 +67,7 @@ def main():
       if entry.name not in specialEntries:
         entry.run()
   elif args.arch_post_install:
-    post_install.install(user, script)
+    post_install.install()
   else:
     argsAsVars = vars(args)
     for entry in installEntries:

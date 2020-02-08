@@ -1,13 +1,12 @@
-import os
+import os, re
 from mutil import cmd, run, cp, rm
 
 # --------------- CONSTANTS START ---------------
-# Swap size is in MiB
+# Size in MB
 UEFI_FROM = 1
-UEFI_TO = 261
-SWAP_SIZE = 6000
-SWAP_SIZE_FROM = UEFI_TO
-SWAP_SIZE_TO = SWAP_SIZE_FROM + SWAP_SIZE
+UEFI_TO = 257
+# Size in GB
+SWAP_SIZE = 6
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 # --------------- CONSTANTS END ---------------
 
@@ -34,6 +33,7 @@ def cpIntoUserHome(user):
 
     # Lets copy ourselves into the installation
     cp(rel('../'), userHomePathDotfiles)
+    chroot(f'chown -R {user} {userHome}/dotfiles')
   except Exception as e:
     raise Exception(f'Failed to copy ourselves into the installation - {e}')
 
@@ -65,28 +65,60 @@ def diskSetup():
 
   partedDisk = parted(diskToInstallTo)
   partedDisk('mklabel gpt')
-  partedDisk(f'mkpart primary fat32 {UEFI_FROM}MiB {UEFI_TO}MiB')
+  partedDisk(f'mkpart primary fat32 {UEFI_FROM}MB {UEFI_TO}MB')
   partedDisk('set 1 esp on')
-  partedDisk(f'mkpart primary linux-swap {SWAP_SIZE_FROM}MiB {SWAP_SIZE_TO}MiB')
-  partedDisk(f'mkpart primary ext4 {SWAP_SIZE_TO}MiB 100%')
+  partedDisk(f'mkpart primary ext4 {UEFI_TO}MiB 100%')
 
   cprint('The final partition is as follows:')
   partedDisk('print')
   input('Press enter to continue...')
 
+  cprint('Crypto setup')
+  cryptDisk = f'{diskToInstallTo}2'
+  while True:
+    try:
+      cmd(f'cryptsetup luksFormat {cryptDisk}')
+      break
+    except KeyboardInterrupt:
+      raise
+    except:
+      pass
+
+  while True:
+    try:
+      cmd(f'cryptsetup open {cryptDisk} cryptlvm')
+      break
+    except KeyboardInterrupt:
+      raise
+    except:
+      pass
+
+  cprint('LVM setup')
+  lvmGroupName = 'lvm'
+  cryptLvmPath = '/dev/mapper/cryptlvm'
+  cmd(f'pvcreate {cryptLvmPath}')
+  cmd(f'vgcreate {lvmGroupName} {cryptLvmPath}')
+  cmd(f'lvcreate -L {SWAP_SIZE}G {lvmGroupName} --name swap')
+  swapDisk = f'/dev/{lvmGroupName}/swap'
+  cmd(f'lvcreate -l 100%FREE {lvmGroupName} --name root')
+  rootDisk = f'/dev/{lvmGroupName}/root'
+
   cprint('Formatting')
   cmd(f'mkfs.vfat {diskToInstallTo}1')
-  cmd(f'mkfs.ext4 {diskToInstallTo}3')
+  cmd(f'mkfs.ext4 {rootDisk}')
 
   cprint('Enabling swap')
-  cmd(f'mkswap {diskToInstallTo}2')
-  cmd(f'swapon {diskToInstallTo}2')
+  cmd(f'mkswap {swapDisk}')
+  cmd(f'swapon {swapDisk}')
 
   # Mount partitions
   cprint('Mounting partitions')
-  cmd(f'mount {diskToInstallTo}3 /mnt')
+  cmd(f'mount {rootDisk} /mnt')
   cmd(f'mkdir /mnt/boot')
   cmd(f'mount {diskToInstallTo}1 /mnt/boot')
+
+  # Returning the crypt device grub should decrypt
+  return cryptDisk
 
 def initIntoMnt():
   # Install mirror-lists
@@ -95,11 +127,14 @@ def initIntoMnt():
 
   # Install essential packages
   cprint('Installing essentials')
-  cmd('pacstrap /mnt base base-devel linux linux-firmware neovim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish git python python-pip cmake xz pigz')
+  cmd('pacstrap /mnt base base-devel linux linux-firmware neovim dhcpcd man-db man-pages intel-ucode grub efibootmgr fish git python python-pip cmake xz pigz lvm2')
 
 def generateFStab():
   cprint('Generating fstab')
-  writeFileContent('/mnt/etc/fstab', run('genfstab -U /mnt').stdout)
+  fstabContent = run('genfstab -U /mnt').stdout
+  # Add tmpfs
+  fstabContent += 'tmpfs   /tmp         tmpfs   rw,nodev,nosuid          0  0\n'
+  writeFileContent('/mnt/etc/fstab', fstabContent)
 
 def setupNewSystem():
   # Setup region
@@ -135,6 +170,8 @@ def setupUsers(user):
       cprint('Change root password')
       chroot('passwd')
       break
+    except KeyboardInterrupt:
+      raise
     except:
       pass
 
@@ -144,6 +181,8 @@ def setupUsers(user):
       cprint('Password for the new user:')
       chroot(f'passwd {user}')
       break
+    except KeyboardInterrupt:
+      raise
     except:
       pass
 
@@ -159,9 +198,26 @@ def enableMultiLibs():
 
   writeFileContent(pacmanConf, contentToWrite)
 
-def installGrub():
-  cprint('Installing grub')
-  chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
+def updateMkinitcpio():
+  cprint('Configuring Mkinitcpio')
+  file = '/mnt/etc/mkinitcpio.conf'
+  content = getFileContents(file)
+  content = content.replace('#COMPRESSION="xz"', 'COMPRESSION="xz"')
+  pattern = r'^HOOKS=\((.*)\)$'
+  hooks = re.findall(pattern, content, re.MULTILINE)[0]
+  hooks = hooks.replace('block', 'block keymap encrypt')
+  hooks = hooks.replace('filesystems', 'lvm2 filesystems')
+  content = re.sub(pattern, f'HOOKS=({hooks})', content, flags=re.MULTILINE)
+  writeFileContent(file, content)
+  chroot('mkinitcpio -p linux')
+
+def configureGrub(cryptDevice):
+  cprint('Configuring grub')
+  grubFile = '/mnt/etc/default/grub'
+  grubContent = getFileContents(grubFile).replace('GRUB_CMDLINE_LINUX=""', f'GRUB_CMDLINE_LINUX="cryptdevice={cryptDevice}:crypt"')
+  writeFileContent(grubFile, grubContent)
+
+  chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=arch_grub --recheck')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
 def doc():
@@ -173,12 +229,13 @@ def install():
   cmd('loadkeys sv-latin1')
   cmd('timedatectl set-ntp true')
 
-  diskSetup()
+  cryptDevice = diskSetup()
   initIntoMnt()
   generateFStab()
   setupNewSystem()
   setupUsers(user)
-  installGrub()
+  updateMkinitcpio()
+  configureGrub(cryptDevice)
   enableMultiLibs()
   cpIntoUserHome(user)
   cprint('DONE!')

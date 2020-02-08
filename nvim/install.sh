@@ -3,7 +3,7 @@
 cd $HOME/.config/
 mkdir -p nvim
 cd nvim
-ln $HOME/dotfiles/nvim/init.vim .
+ln -s $HOME/dotfiles/nvim/init.vim .
 
 echo "Installing vim-plug"
 curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
@@ -11,4 +11,4 @@ curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 
 echo "Installing plugins"
 pip install neovim --user
-nvim --headless +PlugInstall +UpdateRemotePlugins +q
+nvim --headless +PlugInstall +UpdateRemotePlugins +qa
