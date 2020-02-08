@@ -2,5 +2,8 @@
 
 from mutil import cmd
 
-def install(user, script):
-  cmd(f'su {user} -P -c "cd /home/{user}/dotfiles/arch_post_install/scripts && ./{script}"')
+def doc():
+  return 'Used to install various programs after arch linux has been installed'
+
+def install():
+  cmd('./scripts/post-install.sh')

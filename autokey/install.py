@@ -21,5 +21,8 @@ def updateAutokeyFolders():
   resultingContent = json.dumps(jsonContent, indent=4)
   writeFileContents(resultingContent)
 
+def doc():
+  return 'Adds autokey configuration files to the config directory'
+
 def install():
   updateAutokeyFolders()

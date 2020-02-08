@@ -4,7 +4,8 @@ yay -S
   sddm \
   plasma \
   networkmanager plasma-nm \
-  bluedevil \
+  bluez bluez-utils bluedevil pulseaudio-bluetooth \
+  pulseaudio \
   ksysguard \
   powerdevil \
   breeze-grub \

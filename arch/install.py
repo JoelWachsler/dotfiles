@@ -24,9 +24,8 @@ def chroot(command):
 def cpFromVariousToEtc(file):
   return cp(rel(f'various-files/{file}'), f'/mnt/etc/{file}')
 
-def runScript(script, user):
+def cpIntoUserHome(user):
   try:
-    cprint(f'Running the script: {script}')
     userHome = f'/home/{user}'
     userHomePathDotfiles = f'/mnt{userHome}/dotfiles'
 
@@ -35,10 +34,8 @@ def runScript(script, user):
 
     # Lets copy ourselves into the installation
     cp(rel('../'), userHomePathDotfiles)
-
-    chroot(f'{userHome}/dotfiles/dotfiles.sh --arch_post_install --user {user} --script {script}')
   except Exception as e:
-    raise Exception(f'Failed to run the script: {script} - {e}')
+    raise Exception(f'Failed to copy ourselves into the installation - {e}')
 
 def getFileContents(file):
   with open(file, 'r') as f:
@@ -167,6 +164,9 @@ def installGrub():
   chroot('grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
   chroot('grub-mkconfig -o /boot/grub/grub.cfg')
 
+def doc():
+  return 'Installs arch linux'
+
 def install():
   user = input('Which user shall I install as: ')
   # Locale and clock syncing
@@ -180,5 +180,6 @@ def install():
   setupUsers(user)
   installGrub()
   enableMultiLibs()
-  runScript('post-install.sh', user)
+  cpIntoUserHome(user)
   cprint('DONE!')
+  cprint('Restart and run "./dotfiles --arch_post_install"')
