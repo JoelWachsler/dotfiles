@@ -1,0 +1,5 @@
+[Theme]
+name=breeze-dark
+
+[Wallpapers]
+usersWallpapers[$e]=file:///$HOME/dotfiles/configure_kde/kde_files/wallpaper.jpg
