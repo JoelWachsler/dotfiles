@@ -1,0 +1,46 @@
+let mapleader = ' '
+
+set number
+set rnu
+set incsearch hlsearch
+set ignorecase smartcase
+set scrolloff=5
+set showmde
+set surround
+set ideajoin
+
+nnoremap <tab> <c-w>w
+
+" Multiple cursors
+" set multiple-cursors
+" nnoremap <A-m> <Plug>NextWholeOccurrence
+" vnoremap <A-m> <Plug>NextWholeOccurrence
+" inoremap <A-m> <Plug>NextWholeOccurrence
+
+" AceMotions
+nnoremap <leader>w :action AceAction<CR>
+nnoremap <leader>l :action AceLineAction<CR>
+nnoremap <leader>t :action AceTargetAction<CR>
+
+nnoremap Q @q
+
+nnoremap <leader>cc :action CommentByLineComment<cr>
+vnoremap <leader>cc :action CommentByLineComment<cr>
+
+nnoremap <leader>ff :action FindInPath<cr>
+nnoremap <leader>fu :action FindUsages<cr>
+nnoremap <leader>su :action ShowUsages<cr>
+nnoremap <leader>cv :action ChangeView<cr>
+nnoremap <leader>bb :action ToggleLineBreakpoint<cr>
+nnoremap <leader>br :action ViewBreakpoints<cr>
+nnoremap <leader>rf :action RenameFile<cr>
+nnoremap <leader>dd :action Debug<cr>
+nnoremap <leader>dc :action DebugClass<cr>
+nnoremap <leader>ds :action ChooseDebugConfiguration<cr>
+nnoremap <leader>rr :action Run<cr>
+nnoremap <leader>rc :action RunClass<cr>
+nnoremap <leader>rs :action ChooseRunConfiguration<cr>
+nnoremap <leader>ga :action GotoAction<cr>
+nnoremap <leader>gi :action GotoImplementation<cr>
+nnoremap <leader>gs :action GotoSuperMethod<cr>
+nnoremap <leader>a :action Annotate<cr>
