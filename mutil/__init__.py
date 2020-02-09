@@ -7,17 +7,34 @@ def cmd(command):
   return subprocess.check_call(expand(command), shell=True)
 
 def run(command):
-  return subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+  return subprocess.run(expand(command), stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+
+def isFile(file):
+  return os.path.isfile(expand(file))
+
+def copyFile(fromFile, toFile):
+  return shutil.copy(expand(fromFile), expand(toFile))
+
+def copyDir(fromFile, toFile):
+  return shutil.copytree(expand(fromFile), expand(toFile))
 
 def cp(fromFile, toFile):
-  if os.path.isfile(fromFile):
-    return shutil.copy(fromFile, toFile)
+  if isFile(fromFile):
+    return copyFile(fromFile, toFile)
   else:
-    return shutil.copytree(fromFile, toFile)
+    return copyDir(fromFile, toFile)
 
 def rm(file):
-  if os.path.exists(file):
-    shutil.rmtree(file)
+  if exists(file):
+    shutil.rmtree(expand(file))
 
 def exists(file):
-  return os.path.exists(file)
+  return os.path.exists(expand(file))
+
+def getFileContents(file):
+  with open(expand(file), 'r') as f:
+    return f.read()
+
+def writeFileContent(file, content):
+  with open(expand(file), 'w') as f:
+    f.write(content)

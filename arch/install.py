@@ -1,5 +1,5 @@
 import os, re
-from mutil import cmd, run, cp, rm
+from mutil import cmd, run, cp, rm, getFileContents, writeFileContent
 
 # --------------- CONSTANTS START ---------------
 # Size in MB
@@ -36,14 +36,6 @@ def cpIntoUserHome(user):
     chroot(f'chown -R {user} {userHome}/dotfiles')
   except Exception as e:
     raise Exception(f'Failed to copy ourselves into the installation - {e}')
-
-def getFileContents(file):
-  with open(file, 'r') as f:
-    return f.read()
-
-def writeFileContent(file, content):
-  with open(file, 'w') as f:
-    f.write(content)
 
 # --------------- UTILS END ---------------
 

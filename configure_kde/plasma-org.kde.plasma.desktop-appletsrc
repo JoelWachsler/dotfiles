@@ -45,7 +45,7 @@ ToolBoxButtonState=topright
 ToolBoxButtonX=2524
 
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///home/itchi/Dropbox/wallpaper.jpg
+Image=file:///WALLPAPER_PATH
 
 [Containments][2]
 ItemGeometriesHorizontal=
@@ -65,7 +65,7 @@ DialogWidth=960
 PreloadWeight=0
 
 [Containments][2][Wallpaper][org.kde.image][General]
-Image=file:///home/itchi/Dropbox/wallpaper.jpg
+Image=file:///WALLPAPER_PATH
 
 [Containments][25]
 activityId=
@@ -164,7 +164,7 @@ ToolBoxButtonState=topright
 ToolBoxButtonX=2268
 
 [Containments][3][Wallpaper][org.kde.image][General]
-Image=file:///home/itchi/Dropbox/wallpaper.jpg
+Image=file:///WALLPAPER_PATH
 
 [Containments][30]
 activityId=
@@ -274,7 +274,7 @@ DialogWidth=1399
 PreloadWeight=0
 
 [Containments][4][Wallpaper][org.kde.image][General]
-Image=file:///home/itchi/Dropbox/wallpaper.jpg
+Image=file:///WALLPAPER_PATH
 
 [Containments][43]
 activityId=
@@ -454,7 +454,7 @@ DialogWidth=960
 PreloadWeight=0
 
 [Containments][51][Wallpaper][org.kde.image][General]
-Image=file:///home/itchi/Dropbox/wallpaper.jpg
+Image=file:///WALLPAPER_PATH
 
 [ScreenMapping]
 itemsOnDisabledScreens=

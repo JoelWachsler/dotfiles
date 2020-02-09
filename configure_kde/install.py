@@ -1,27 +1,17 @@
-import sys
-from mutil import cmd
+import sys, os
+from mutil import cmd, cp, getFileContents, writeFileContent
 
-# cmd('pip install dbus-python --user')
-# import dbus
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
-# def setwallpaper(filepath, plugin = 'org.kde.image'):
-#   script = """
-#   var allDesktops = desktops();
-#   print (allDesktops);
-#   for (i=0;i<allDesktops.length;i++) {
-#       d = allDesktops[i];
-#       d.wallpaperPlugin = "%s";
-#       d.currentConfigGroup = Array("Wallpaper", "%s", "General");
-#       d.writeConfig("Image", "file://%s")
-#   }
-#   """
-#   bus = dbus.SessionBus()
-#   plasma = dbus.Interface(bus.get_object('org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde.PlasmaShell')
-#   plasma.evaluateScript(script % (plugin, plugin, filepath))
+def filePath(fileRelToCurrentDir):
+  return f'{DIR_PATH}/{fileRelToCurrentDir}'
+
+def restoreDesktopLayout():
+  content = getFileContents(filePath('plasma-org.kde.plasma.desktop-appletsrc'))
+  content = content.replace('WALLPAPER_PATH', filePath('wallpaper.jpg'))
+  writeFileContent('$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc', content)
 
 def install():
-  # setwallpaper('$HOME/dotfiles/configure_kde/wallpaper.jpg')
-
-  # Restore desktop layout
-  cmd('mkdir -p $HOME/.config/plasma-org.kde.plasma.desktop-appletsrc')
-  cmd('sudo cp $HOME/dotfiles/configure_kde/plasma-org.kde.plasma.desktop-appletsrc $HOME/.config/plasma-org.kde.plasma.desktop-appletsrc')
+  restoreDesktopLayout()
+  cp(filePath('konsole/konsolerc'), '$HOME/.config/konsolerc')
+  cp(filePath('konsole/Profile 1.profile'), '$HOME/.local/share/konsole/')

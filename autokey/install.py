@@ -1,15 +1,7 @@
 import json, os
-from mutil import cmd
+from mutil import cmd, getFileContents, writeFileContent
 
 HOME = os.environ['HOME']
-
-def writeFileContents(file, contents):
-  with open(file, 'w') as f:
-    f.write(contents)
-
-def getFileContents(file):
-  with open(file, 'r') as f:
-    return f.read()
 
 def updateAutokeyFolders():
   fileDir = f'{HOME}/.config/autokey'
