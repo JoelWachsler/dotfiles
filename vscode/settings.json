@@ -50,5 +50,6 @@
     "javascript.preferences.quoteStyle": "single",
     "typescript.preferences.quoteStyle": "single",
     "vim.hlsearch": true,
-    "plantuml.exportFormat": "svg"
+    "plantuml.exportFormat": "svg",
+    "git.autofetch": true
 }
