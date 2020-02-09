@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 yay -S jdk11-openjdk jre11-openjdk jre11-openjdk-headless openjdk11-doc openjdk11-src visualvm \
-  intellij-idea-ultimate-edition \
+  intellij-idea-ultimate-edition intellij-idea-ultimate-edition-jre \
   discord \
   spotify \
   ttf-meslo ttf-ms-fonts ttf-opensans \
