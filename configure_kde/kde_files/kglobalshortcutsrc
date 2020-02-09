@@ -1,12 +1,13 @@
 [ActivityManager]
 _k_friendly_name=Activity Manager
 switch-to-activity-674f0f73-0551-49aa-ae40-597ebc6c9efe=none,none,Switch to activity "Default"
+switch-to-activity-a0bfc384-7ce9-471b-b2cc-b6c634e6399b=none,none,Switch to activity "Default"
 
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to Swedish (no dead keys)=none,none,Switch keyboard layout to Swedish (no dead keys)
 Switch keyboard layout to se(nodeadkeys)=none,none,Switch keyboard layout to se(nodeadkeys)
 Switch to Next Keyboard Layout=Ctrl+Alt+K,none,Switch to Next Keyboard Layout
-_k_friendly_name=System Settings Module
+_k_friendly_name=KDE Daemon
 
 [kaccess]
 Toggle Screen Reader On and Off=Meta+Alt+S,Meta+Alt+S,Toggle Screen Reader On and Off
@@ -26,7 +27,7 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 [khotkeys]
 _k_friendly_name=KDE Daemon
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-{d96e17fd-d08c-40c0-959c-3bd818217c16}=Ctrl+Alt+T,none,Launch Konsole
+{d4d894c8-44c5-4e1f-8cfc-c3fd25f1531a}=none,none,Launch Konsole
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -209,6 +210,14 @@ stopmedia=Media Stop,Media Stop,Stop media playback
 _k_friendly_name=Dolphin
 _launch=Meta+E,Meta+E,Dolphin
 
+[org.kde.spectacle.desktop]
+ActiveWindowScreenShot=Meta+Print,Meta+Print,Capture Active Window
+CurrentMonitorScreenShot=,,Capture Current Monitor
+FullScreenScreenShot=Shift+Print,Shift+Print,Capture Entire Desktop
+RectangularRegionScreenShot=Meta+Shift+Print,Meta+Shift+Print,Capture Rectangular Region
+_k_friendly_name=Spectacle
+_launch=Print,Print,Spectacle
+
 [org_kde_powerdevil]
 Decrease Keyboard Brightness=Keyboard Brightness Down,Keyboard Brightness Down,Decrease Keyboard Brightness
 Decrease Screen Brightness=Monitor Brightness Down,Monitor Brightness Down,Decrease Screen Brightness
@@ -234,6 +243,7 @@ activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 26=Alt+F1,none,Activate Application Launcher Widget
+activate widget 4=,none,Activate Application Launcher Widget
 activate widget 42=none,none,Activate Icons-only Task Manager Widget
 activate widget 44=,none,Activate Application Launcher Widget
 clear-history=none,none,Clear Clipboard History
