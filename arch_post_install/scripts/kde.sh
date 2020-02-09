@@ -23,4 +23,4 @@ yay -S \
   --noconfirm
 
 systemctl enable sddm
-systemctl enable networkmanager
+systemctl enable NetworkManager
