@@ -8,3 +8,5 @@ set -g man_standout -b black 93a1a1
 set -g man_underline -u 93a1a1
 
 export LANG=en_US.UTF-8
+
+set -gx EDITOR nvim
