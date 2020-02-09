@@ -57,7 +57,7 @@ def main():
   for entry in installEntries:
     parser.add_argument(f'--{entry.name}', help=entry.documentation, dest=f'{entry.name}', action='store_true', default=False)
 
-  specialEntries = ['arch', 'arch_post_install', 'virtualbox_guest', 'autokey']
+  specialEntries = ['arch', 'arch_post_install', 'virtualbox_guest', 'autokey', 'configure_kde']
   parser.add_argument('--everything', help=f'Install everything (except: {", ".join(specialEntries)})', action='store_true', default=False)
 
   args = parser.parse_args()

@@ -65,8 +65,20 @@ def diskSetup():
   partedDisk('print')
   input('Press enter to continue...')
 
+  nvmeInput = ''
+  while nvmeInput not in ['Y', 'n']:
+    nvmeInput = input('Installing to nvme? [Y/n]')
+    break
+  except KeyboardInterrupt:
+    raise
+  except:
+    pass
+  extra = ''
+  if nvmeInput == 'Y':
+    extra = 'p'
+
   cprint('Crypto setup')
-  cryptDisk = f'{diskToInstallTo}2'
+  cryptDisk = f'{diskToInstallTo}{extra}2'
   while True:
     try:
       cmd(f'cryptsetup luksFormat {cryptDisk}')
@@ -96,7 +108,7 @@ def diskSetup():
   rootDisk = f'/dev/{lvmGroupName}/root'
 
   cprint('Formatting')
-  cmd(f'mkfs.vfat {diskToInstallTo}1')
+  cmd(f'mkfs.vfat {diskToInstallTo}{extra}1')
   cmd(f'mkfs.ext4 {rootDisk}')
 
   cprint('Enabling swap')
@@ -107,7 +119,7 @@ def diskSetup():
   cprint('Mounting partitions')
   cmd(f'mount {rootDisk} /mnt')
   cmd(f'mkdir /mnt/boot')
-  cmd(f'mount {diskToInstallTo}1 /mnt/boot')
+  cmd(f'mount {diskToInstallTo}{extra}1 /mnt/boot')
 
   # Returning the crypt device grub should decrypt
   return cryptDisk
