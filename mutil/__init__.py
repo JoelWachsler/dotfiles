@@ -9,6 +9,9 @@ def cmd(command):
 def run(command):
   return subprocess.run(expand(command), stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 
+def ln(fromFile, toFile):
+  return os.symlink(expand(fromFile), expand(toFile))
+
 def isFile(file):
   return os.path.isfile(expand(file))
 

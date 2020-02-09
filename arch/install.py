@@ -44,6 +44,16 @@ def parted(disk):
     return cmd(f'parted {disk} {command}')
   return partedOnDisk
 
+def runInput(inputMethod):
+  while True:
+    try:
+      return inputMethod()
+      break
+    except KeyboardInterrupt:
+      raise
+    except:
+      pass
+
 def diskSetup():
   cprint('The following disks are available')
   cmd('lsblk')
@@ -79,23 +89,13 @@ def diskSetup():
 
   cprint('Crypto setup')
   cryptDisk = f'{diskToInstallTo}{extra}2'
-  while True:
-    try:
-      cmd(f'cryptsetup luksFormat {cryptDisk}')
-      break
-    except KeyboardInterrupt:
-      raise
-    except:
-      pass
+  def cryptFormat():
+    return cmd(f'cryptsetup luksFormat {cryptDisk}')
+  runInput(cryptFormat)
 
-  while True:
-    try:
-      cmd(f'cryptsetup open {cryptDisk} cryptlvm')
-      break
-    except KeyboardInterrupt:
-      raise
-    except:
-      pass
+  def cryptOpen():
+    return cmd(f'cryptsetup open {cryptDisk} cryptlvm')
+  runInput(cryptOpen)
 
   cprint('LVM setup')
   lvmGroupName = 'lvm'
@@ -169,26 +169,16 @@ def setupUsers(user):
   cprint('Changing the shell for root')
   chroot('chsh -s /usr/bin/fish')
 
-  while True:
-    try:
-      cprint('Change root password')
-      chroot('passwd')
-      break
-    except KeyboardInterrupt:
-      raise
-    except:
-      pass
+  def changeRootPw():
+    cprint('Change root password')
+    chroot('passwd')
+  runInput(changeRootPw)
 
   chroot(f'useradd -m -G wheel -s /usr/bin/fish {user}')
-  while True:
-    try:
-      cprint('Password for the new user:')
-      chroot(f'passwd {user}')
-      break
-    except KeyboardInterrupt:
-      raise
-    except:
-      pass
+  def changeUserPw():
+    cprint('Password for the new user:')
+    chroot(f'passwd {user}')
+  runInput(changeUserPw)
 
   sudoers = '/mnt/etc/sudoers'
   contentToWrite = getFileContents(sudoers).replace('# %wheel ALL=(ALL) ALL', '%wheel ALL=(ALL) ALL').replace('root ALL=(ALL) ALL\n', f'root ALL=(ALL) ALL\n{user} ALL=(ALL) ALL\n')

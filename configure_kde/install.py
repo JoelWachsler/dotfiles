@@ -1,5 +1,5 @@
 import sys, os
-from mutil import cmd, cp, getFileContents, writeFileContent
+from mutil import cmd, cp, getFileContents, writeFileContent, ln
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -8,6 +8,9 @@ def filePath(file):
 
 def copyToXdgHome(file):
   cp(filePath(file), f'$HOME/.config/{file}')
+
+def linkToXdgHome(file):
+  ln(filePath(file), f'$HOME/.config/{file}')
 
 def runScript(script):
   cmd(f'qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(echo "$(cat {filePath(script)})")"')
@@ -19,9 +22,9 @@ def install():
   runScript('changeWallpaper.js')
   updateLockScreenWallpaper()
   # copyToXdgHome('plasma-org.kde.plasma.desktop-appletsrc')
-  copyToXdgHome('plasmarc')
-  copyToXdgHome('konsolerc')
-  cp(filePath('Profile 1.profile'), '$HOME/.local/share/konsole/')
-  copyToXdgHome('kdeglobals')
-  copyToXdgHome('kglobalshortcutsrc')
-  copyToXdgHome('plasmarc')
+  linkToXdgHome('plasmarc')
+  linkToXdgHome('konsolerc')
+  ln(filePath('Profile 1.profile'), '$HOME/.local/share/konsole/')
+  linkToXdgHome('kdeglobals')
+  linkToXdgHome('kglobalshortcutsrc')
+  linkToXdgHome('plasmarc')
